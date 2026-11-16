@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import RecipeDetail from '../../../components/RecipeDetail.astro';
+export async function getStaticPaths() {
+	const recipes = await getCollection('recipes', ({ data }) => data.language === 'en' || data.language === 'de');
+	return recipes.map((recipe) => ({ params: { lang: recipe.data.language, slug: recipe.data.key } }));
+}
+const { lang, slug } = Astro.params;
+---
+<RecipeDetail lang={lang as 'en' | 'de'} slug={slug!} />

@@ -1,0 +1,9 @@
+---
+import CategoryListing from '../../../components/CategoryListing.astro';
+import { categories } from '../../../data/categories';
+export function getStaticPaths() {
+	return ['en', 'de'].flatMap((lang) => categories.filter(({ slug }) => slug !== 'all').map(({ slug }) => ({ params: { lang, category: slug } })));
+}
+const { lang, category } = Astro.params;
+---
+<CategoryListing lang={lang as 'en' | 'de'} categorySlug={category!} />

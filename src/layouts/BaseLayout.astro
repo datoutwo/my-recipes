@@ -1,0 +1,36 @@
+---
+import { sitePath } from '../data/urls';
+import { languages, ui, type Language } from '../data/locales';
+import { localePath } from '../data/urls';
+interface Props { title?: string; description?: string; lang?: Language; switchLinks?: Partial<Record<Language, string>> }
+const { title, description = 'A personal collection of recipes worth making again.', lang = 'zh-TW', switchLinks = {} } = Astro.props;
+const text = ui[lang];
+const pageTitle = title ?? text.brand;
+const home = localePath(lang);
+const htmlLang = languages.find((language) => language.code === lang)?.html ?? 'zh-Hant';
+---
+<!doctype html>
+<html lang={htmlLang}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<link rel="icon" type="image/svg+xml" href={sitePath('favicon.svg')} />
+		<title>{pageTitle} · {text.brand}</title>
+	</head>
+	<body>
+		<header class="site-header">
+			<a class="brand" href={home} aria-label={text.brand}><span class="brand-mark">a.</span><span>{text.brand}<small>{text.tagline}</small></span></a>
+			<nav aria-label={text.brand}><a href={`${home}#recipes`}>{text.navRecipes}</a><a href={`${home}#categories`}>{text.navCategories}</a><a class="nav-about" href={`${home}#about`}>{text.navAbout}</a></nav>
+			<nav class="language-switch" aria-label="Language">{languages.map((language) => <a class:list={{ selected: language.code === lang }} href={switchLinks[language.code] ?? localePath(language.code)} lang={language.html} aria-current={language.code === lang ? 'page' : undefined}>{language.label}</a>)}</nav>
+		</header>
+		<main><slot /></main>
+		<footer class="site-footer"><a class="brand footer-brand" href={home}><span class="brand-mark">a.</span><span>{text.brand}<small>{text.tagline}</small></span></a><span>{text.footer}</span><a href="#top">↑</a></footer>
+	</body>
+</html>
+<style is:global>
+	@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
+	:root{font-family:'DM Sans',sans-serif;color:#28352d;background:#fbfaf7;font-synthesis:none;text-rendering:optimizeLegibility;--green:#526b50;--muted:#81867d;--line:#e9e7df}*{box-sizing:border-box}body{margin:0}a{color:inherit;text-decoration:none}.site-header,.site-footer{max-width:1200px;margin:auto;padding:24px 32px;display:flex;align-items:center;justify-content:space-between}.site-header{border-bottom:1px solid var(--line)}.brand{display:flex;gap:11px;align-items:center;font-family:'Playfair Display',serif;font-weight:600;font-size:18px;line-height:1.05}.brand small{display:block;margin-top:5px;font:600 9px 'DM Sans',sans-serif;letter-spacing:1.6px;color:var(--muted)}.brand-mark{width:39px;height:39px;display:grid;place-items:center;border-radius:50%;background:#e5eadf;color:var(--green);font:600 22px 'Playfair Display',serif}.site-header nav{display:flex;gap:24px;align-items:center;font-size:13px;color:#62685f}.site-header nav a:hover,.site-footer>a:hover{color:var(--green)}.language-switch{padding:4px;border:1px solid var(--line);border-radius:20px;gap:3px!important}.language-switch a{padding:6px 8px;border-radius:15px;font-size:10px}.language-switch a.selected{background:#e7ede2;color:#435e43}.site-footer{margin-top:80px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}.footer-brand{color:#28352d}
+	@media(max-width:700px){.site-header,.site-footer{padding:18px 20px}.site-header nav{gap:12px;font-size:11px}.site-header{flex-wrap:wrap;gap:12px}.site-header .brand{margin-right:auto}.site-header .nav-about{display:none}.language-switch{order:2}.site-footer{gap:16px;flex-wrap:wrap}.site-footer>span{order:3;width:100%}}
+</style>

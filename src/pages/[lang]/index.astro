@@ -1,0 +1,8 @@
+---
+import RecipeIndex from '../../components/RecipeIndex.astro';
+export function getStaticPaths() {
+	return ['en', 'de'].map((lang) => ({ params: { lang } }));
+}
+const { lang } = Astro.params;
+---
+<RecipeIndex lang={lang as 'en' | 'de'} />

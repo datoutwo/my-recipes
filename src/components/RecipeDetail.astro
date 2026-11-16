@@ -1,0 +1,13 @@
+---
+import { getCollection } from 'astro:content';
+import RecipeLayout from '../layouts/RecipeLayout.astro';
+import { languages, type Language } from '../data/locales';
+import { localePath } from '../data/urls';
+interface Props { lang: Language; slug: string }
+const { lang, slug } = Astro.props;
+const entries = await getCollection('recipes');
+const recipe = entries.find((entry) => entry.data.language === lang && entry.data.key === slug);
+if (!recipe) throw new Error(`Missing ${lang} translation for ${slug}`);
+const switchLinks = Object.fromEntries(languages.flatMap(({ code }) => entries.some((entry) => entry.data.language === code && entry.data.key === slug) ? [[code, localePath(code, `recipes/${slug}/`)]] : []));
+---
+<RecipeLayout recipe={recipe} lang={lang} switchLinks={switchLinks} />

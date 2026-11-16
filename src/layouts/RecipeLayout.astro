@@ -1,0 +1,27 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import { localePath } from '../data/urls';
+import { localeCategory, ui, type Language } from '../data/locales';
+interface Props { recipe: CollectionEntry<'recipes'>; lang: Language; switchLinks: Partial<Record<Language, string>> }
+const { recipe, lang, switchLinks } = Astro.props;
+const text = ui[lang];
+const dateLocale = lang === 'zh-TW' ? 'zh-TW' : lang;
+const isWebUrl = (value: string) => {
+	try { return ['http:', 'https:'].includes(new URL(value).protocol); }
+	catch { return false; }
+};
+---
+<BaseLayout title={recipe.data.title} description={recipe.data.description} lang={lang} switchLinks={switchLinks}>
+	<article class="recipe-page">
+		<a class="back" href={`${localePath(lang)}#recipes`}>{text.back}</a>
+		<div class="hero"><img src={recipe.data.image} alt={recipe.data.title} /><div class="hero-shade"></div><div class="hero-copy"><span class="category">{localeCategory(lang, recipe.data.category)}</span><h1>{recipe.data.title}</h1><p>{recipe.data.description}</p></div></div>
+		<div class="details"><span>◷ {text.prep} {recipe.data.prepTime} + {text.cook} {recipe.data.cookTime} {text.minutes}</span><span>✦ {text.difficulty[recipe.data.difficulty as keyof typeof text.difficulty]}</span><span>♧ {recipe.data.servings} {text.servings}</span><span>{text.updated} {recipe.data.updated.toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}</span></div>
+		<div class="columns"><section><h2>{text.ingredients}</h2><ul class="ingredients">{recipe.data.ingredients.map((item: string) => <li>{item}</li>)}</ul><h2>{text.notes}</h2>{recipe.data.notes.length ? <ul class="notes">{recipe.data.notes.map((note: string) => <li>{note}</li>)}</ul> : <p class="empty-note">{text.noNotes}</p>}</section><section class="method"><h2>{text.method}</h2>{recipe.data.instructions.map((step: string) => <p>{step}</p>)}</section></div>
+		<div class="tags">{recipe.data.tags.map((tag: string) => <span>#{tag}</span>)}</div>
+		{recipe.data.references.length > 0 && <section class="references"><h2>{text.references}</h2><ul>{recipe.data.references.map((reference: string) => <li>{isWebUrl(reference) ? <a href={reference} target="_blank" rel="noopener noreferrer">{reference}</a> : reference}</li>)}</ul></section>}
+	</article>
+</BaseLayout>
+<style>
+	.recipe-page{max-width:1000px;margin:28px auto 0;padding:0 32px}.back{display:inline-block;margin-bottom:20px;color:#788074;font-size:12px}.hero{height:370px;position:relative;overflow:hidden;border-radius:15px;background:#d9d9ce}.hero>img{width:100%;height:100%;object-fit:cover}.hero-shade{position:absolute;inset:0;background:linear-gradient(90deg,#17241cbb,transparent 80%)}.hero-copy{position:absolute;left:44px;bottom:40px;max-width:520px;color:white}.category{font-size:11px;letter-spacing:1px;text-transform:uppercase}.hero h1{margin:9px 0;font:600 clamp(36px,6vw,56px) 'Playfair Display',serif}.hero p{font-size:14px;color:#f3f2ed;line-height:1.6}.details{display:flex;gap:25px;flex-wrap:wrap;padding:19px 4px;border-bottom:1px solid #e9e7df;color:#74796f;font-size:12px}.columns{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;padding:35px 4px}.columns h2,.references h2{margin:0 0 18px;font:600 25px 'Playfair Display',serif}.columns section>h2:not(:first-child){margin-top:38px}.ingredients,.notes,.references ul{list-style:none;margin:0;padding:0}.ingredients li,.notes li,.references li{padding:11px 0;border-bottom:1px solid #eceae3;color:#5c6359;font-size:13px;line-height:1.55}.ingredients li:before{content:'□';color:#8a9d7e;margin-right:10px}.method :global(h3){font:600 16px 'Playfair Display',serif}.method :global(p){margin:0 0 20px;color:#5c6359;font-size:13px;line-height:1.8}.method :global(p:before){content:counter(step);counter-increment:step;display:inline-grid;place-items:center;width:27px;height:27px;margin-right:12px;border-radius:50%;background:#e8eee4;color:#526b50;font-size:11px;font-weight:bold}.method{counter-reset:step}.empty-note{color:#92968e;font-size:13px}.tags{display:flex;gap:8px;padding:0 4px;color:#6c8063;font-size:11px}.tags span{padding:7px 10px;border-radius:16px;background:#eef1e9}.references{margin:30px 4px 0}.references a{color:#526b50;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}@media(max-width:700px){.recipe-page{padding:0 20px}.hero{height:330px}.hero-copy{left:25px;right:20px;bottom:24px}.columns{grid-template-columns:1fr;gap:35px;padding-top:28px}.details{gap:12px 20px}}
+</style>

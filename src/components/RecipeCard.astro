@@ -1,0 +1,11 @@
+---
+import { localePath } from '../data/urls';
+import { localeCategory, type Language } from '../data/locales';
+interface Props { recipe: { id: string; data: { key: string; title: string; description: string; image: string; category: string; prepTime: number; cookTime: number } }; lang?: Language }
+const { recipe, lang = 'zh-TW' } = Astro.props;
+const href = localePath(lang, `recipes/${recipe.data.key}/`);
+---
+<article class="card"><a class="image-link" href={href}><img src={recipe.data.image} alt={recipe.data.title} loading="lazy" /><span class="category-pill">{localeCategory(lang, recipe.data.category)}</span><span class="save" aria-hidden="true">♡</span></a><div class="card-copy"><a href={href}><h3>{recipe.data.title}</h3></a><p>{recipe.data.description}</p><div class="meta"><span>◷ {recipe.data.prepTime + recipe.data.cookTime} {lang === 'zh-TW' ? '分鐘' : lang === 'de' ? 'Min.' : 'min'}</span><span>·</span><span>{localeCategory(lang, recipe.data.category)}</span></div></div></article>
+<style>
+	.card{overflow:hidden;border:1px solid #eeece5;border-radius:12px;background:#fff;transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-3px);box-shadow:0 10px 28px #28352d10}.image-link{height:190px;display:block;position:relative;overflow:hidden;background:#edece5}.image-link img{width:100%;height:100%;object-fit:cover;transition:transform .4s}.card:hover img{transform:scale(1.04)}.category-pill{position:absolute;left:13px;top:13px;padding:6px 9px;border-radius:20px;background:#fffE;color:#53634d;font-size:10px;font-weight:600}.save{position:absolute;right:13px;top:12px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#fffE;color:#59644f;font-size:20px}.card-copy{padding:15px 16px 14px}.card h3{margin:0;font:600 18px 'Playfair Display',serif}.card p{min-height:34px;margin:7px 0 14px;color:#82857d;font-size:11px;line-height:1.55}.meta{display:flex;gap:8px;padding-top:12px;border-top:1px solid #f0eee9;color:#888d83;font-size:10px}
+</style>

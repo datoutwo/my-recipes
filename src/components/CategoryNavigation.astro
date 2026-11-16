@@ -1,0 +1,14 @@
+---
+import { categories } from '../data/categories';
+import { sitePath } from '../data/urls';
+import { localeCategory, type Language } from '../data/locales';
+import { localePath } from '../data/urls';
+interface Props { active?: string; counts?: Record<string, number>; linked?: boolean; lang?: Language }
+const { active = 'All recipes', counts = {}, linked = true, lang = 'zh-TW' } = Astro.props;
+---
+<nav class="category-list" aria-label="Recipe categories">
+	{categories.map((category) => <a class:list={['category', { active: active === category.name }]} href={linked ? (category.slug === 'all' ? `${localePath(lang)}#recipes` : localePath(lang, `categories/${category.slug}/`)) : undefined} aria-current={active === category.name ? 'page' : undefined}><span class="category-icon">{category.icon}</span><span>{localeCategory(lang, category.name)}</span><span class="count">{counts[category.name] ?? 0}</span></a>)}
+</nav>
+<style>
+	.category-list{display:grid;gap:5px}.category{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;color:#73796f;font-size:13px;transition:background .15s,color .15s}.category:hover,.category.active{background:#e9eee5;color:#435e43}.category-icon{width:20px;text-align:center;font-size:15px}.count{margin-left:auto;font-size:11px;color:#9ca197}
+</style>

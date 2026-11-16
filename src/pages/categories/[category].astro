@@ -1,0 +1,9 @@
+---
+import CategoryListing from '../../components/CategoryListing.astro';
+import { categories } from '../../data/categories';
+export function getStaticPaths() {
+	return categories.filter(({ slug }) => slug !== 'all').map(({ slug }) => ({ params: { category: slug } }));
+}
+const { category } = Astro.params;
+---
+<CategoryListing lang="zh-TW" categorySlug={category!} />
